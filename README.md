@@ -13,6 +13,13 @@ Na pasta do projeto novo, diga ao Claude:
 O Claude segue o [START.md](START.md): instala as skills, liga as regras gerais
 e faz a triagem do projeto com a `optimize-workspace`.
 
+## Regras gerais
+
+O [CLAUDE.md](CLAUDE.md) daqui vale em todo projeto: o `start` copia o arquivo
+para `.claude/setup-skills.CLAUDE.md`, e o `CLAUDE.md` do projeto o importa com
+`@.claude/setup-skills.CLAUDE.md`. Para mudar uma regra geral, edite aqui; o
+`pull` leva a versão nova aos projetos.
+
 ## Skills
 
 | Skill | O que faz | Origem |
