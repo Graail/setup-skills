@@ -4,6 +4,8 @@ O que mudou em cada skill, em qual projeto e por quê. Mais recente primeiro.
 
 ## 2026-11-03
 
+- **audit-repo**: entra no repositório. Antes se chamava `auditoria-repo-clonado`;
+  o nome mudou para ficar mais fácil de chamar. Conteúdo sem mudança.
 - **CLAUDE.md**: regras gerais da Yolo (tratamento por "Yolo", fala guiada pelo
   ASD-STE100, não assumir nada, LGPD). O `start` copia para cada projeto.
 - **karpathy-guidelines** e **humanizer-pt**: entram no repositório, sem mudança.

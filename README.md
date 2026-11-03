@@ -27,6 +27,7 @@ para `.claude/setup-skills.CLAUDE.md`, e o `CLAUDE.md` do projeto o importa com
 | [`optimize-workspace`](skills/optimize-workspace/SKILL.md) | Organiza o trabalho em etapas ICM com dados em OKF. Fecha projetos de software com o protocolo de desempenho. | Própria |
 | [`karpathy-guidelines`](skills/karpathy-guidelines/SKILL.md) | Regras para escrever código: pensar antes, simplicidade, mudanças cirúrgicas, meta verificável. | [andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT) |
 | [`humanizer-pt`](skills/humanizer-pt/SKILL.md) | Tira de textos em português os padrões de escrita de IA, sem mudar o que dizem. | Adaptação de [humanizer](https://github.com/blader/humanizer) (MIT) |
+| [`audit-repo`](skills/audit-repo/SKILL.md) | Audita um repositório de terceiros antes de clonar ou instalar: só leitura, sem rodar o código, e avisa sobre vazamento de dados, telemetria e processamento externo. | Própria |
 
 ## Paridade
 
