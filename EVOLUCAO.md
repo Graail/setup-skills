@@ -2,6 +2,14 @@
 
 O que mudou em cada skill, em qual projeto e por quê. Mais recente primeiro.
 
+## 2026-11-06
+
+- **ponytail** e mais cinco (`-review`, `-audit`, `-debt`, `-gain`, `-help`):
+  entram no repositório, copiadas sem mudança do commit `96608e0` do
+  DietrichGebert/ponytail, depois da auditoria com a `audit-repo`. Só as skills:
+  os hooks e o painel com webhook do plugin ficaram de fora. Motivo: a Yolo quer
+  usar o ponytail em todos os projetos.
+
 ## 2026-11-03
 
 - **audit-repo**: entra no repositório. Antes se chamava `auditoria-repo-clonado`;
