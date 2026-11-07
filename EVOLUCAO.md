@@ -2,6 +2,12 @@
 
 O que mudou em cada skill, em qual projeto e por quê. Mais recente primeiro.
 
+## 2026-11-07
+
+- **nielsen-heuristicas** (projeto yolo-guia): entra no repositório, sem
+  mudança. Três modos: auditoria, criação e checagem do pedido antes de
+  implementar. Motivo: a Yolo quer usar a skill em todos os projetos.
+
 ## 2026-11-06
 
 - **ponytail** e mais cinco (`-review`, `-audit`, `-debt`, `-gain`, `-help`):
