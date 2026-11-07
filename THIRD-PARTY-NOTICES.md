@@ -1,5 +1,13 @@
 # Avisos de terceiros
 
+## ponytail, ponytail-review, ponytail-audit, ponytail-debt, ponytail-gain, ponytail-help
+
+Fonte: https://github.com/DietrichGebert/ponytail, licença MIT, commit
+`96608e078b2d5ea607c5c3b8b5a54d1c1fba6846` (versão 5.3.3). Só a pasta `skills/`,
+sem mudança. Os hooks, o painel ("band") e o webhook do plugin ficaram de fora.
+
+Copyright (c) 2026 DietrichGebert
+
 ## karpathy-guidelines
 
 Fonte: https://github.com/multica-ai/andrej-karpathy-skills, licença MIT.
@@ -13,7 +21,7 @@ versão 3.1.0.
 
 Copyright (c) 2025 Siqi Chen
 
-## Licença MIT (vale para as duas)
+## Licença MIT (vale para todas acima)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
