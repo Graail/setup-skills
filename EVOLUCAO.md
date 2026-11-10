@@ -2,6 +2,14 @@
 
 O que mudou em cada skill, em qual projeto e por quê. Mais recente primeiro.
 
+## 2026-11-10
+
+- **oss-worker** e **offload-local**: entram no repositório. Na `oss-worker`, a
+  regra de "vale usar?" agora é de uso geral e decide só pelo custo em tokens
+  do Claude (delega se L < 0,7 × D). Velocidade não entra na conta e os
+  exemplos de tarefa saíram. Motivo: a Yolo quer uma ferramenta de economia de
+  tokens, sem viés a favor nem contra o modelo local.
+
 ## 2026-11-07
 
 - **nielsen-heuristicas** (projeto yolo-guia): entra no repositório, sem
