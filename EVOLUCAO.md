@@ -2,6 +2,13 @@
 
 O que mudou em cada skill, em qual projeto e por quê. Mais recente primeiro.
 
+## 2026-11-13
+
+- **offload-local**: o executor troca o gpt-oss:20b (Ollama) pelo
+  Qwen3.8-Flash-Next no Strata (API Anthropic em `127.0.0.1:8080`). Novo
+  `claude-local.cmd` liga o Claude Code ao Strata; o `rodar-executor.ps1` usa ele
+  por padrão. Motivo: a Yolo trocou de modelo local.
+
 ## 2026-11-10
 
 - **oss-worker** e **offload-local**: entram no repositório. Na `oss-worker`, a
