@@ -222,6 +222,11 @@ def cmd_chat(a):
 
 
 def main():
+    for stream in (sys.stdout, sys.stderr):   # Windows console: keep accents readable
+        try:
+            stream.reconfigure(encoding="utf-8")
+        except Exception:
+            pass
     p = argparse.ArgumentParser()
     s = p.add_subparsers(dest="cmd", required=True)
     s.add_parser("probe")

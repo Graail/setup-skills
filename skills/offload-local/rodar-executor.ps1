@@ -90,6 +90,9 @@ Você é o EXECUTOR local. Siga a skill offload-local, papel executor.
 Faça só a tarefa $($tarefa.Id) do TASKS.md, do começo ao fim, e pare.
 Você roda pelo script de rotação: não espere /clear e não comece outra tarefa.
 "@
+  # Uma linha só: o claude-local.cmd repassa os argumentos com %*, e uma quebra de linha
+  # corta o resto (as flags de permissão sumiam e o executor ficava sem poder editar).
+  $prompt = ($prompt -replace "\r?\n", " ").Trim()
 
   $log = Join-Path $pastaLog ("{0}-{1:yyyyMMdd-HHmmss}.log" -f $tarefa.Id, (Get-Date))
   Write-Host "[$n] $($tarefa.Id) (branch $($tarefa.Branch)) -> log: $log"
