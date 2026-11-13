@@ -4,6 +4,9 @@ O que mudou em cada skill, em qual projeto e por quê. Mais recente primeiro.
 
 ## 2026-11-13
 
+- **oss-worker → local-worker**: novo nome. O script (`local.py`) fala com a API
+  compatível com OpenAI do Strata em vez da API do Ollama. A estimativa de tempo
+  saiu do script (velocidade não entra na decisão). Prompts em inglês.
 - **offload-local**: o executor troca o gpt-oss:20b (Ollama) pelo
   Qwen3.8-Flash-Next no Strata (API Anthropic em `127.0.0.1:8080`). Novo
   `claude-local.cmd` liga o Claude Code ao Strata; o `rodar-executor.ps1` usa ele
