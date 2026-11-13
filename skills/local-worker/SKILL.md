@@ -1,19 +1,21 @@
 ---
-name: oss-worker
-description: Protocolo para o Claude usar o gpt-oss:20b local (Ollama) como ajudante durante a sessão. Decide se vale usar, faz a projeção de custo, escolhe o formato (chamada única, lote item a item ou plano em .md), roda com auto-compactação de contexto e confere sempre o resultado. O único critério é a economia de tokens do Claude. Use quando o Ollama estiver ligado e delegar puder custar menos tokens que fazer direto, ou quando a pessoa disser "usa o gpt-oss", "modelo local", "ollama".
+name: local-worker
+description: Protocolo para o Claude usar o modelo local (Qwen3.8-Flash-Next no Strata) como ajudante durante a sessão. Decide se vale usar, faz a projeção de custo, escolhe o formato (chamada única, lote item a item ou plano em .md), roda com auto-compactação de contexto e confere sempre o resultado. O único critério é a economia de tokens do Claude. Use quando o Strata estiver ligado e delegar puder custar menos tokens que fazer direto, ou quando a pessoa disser "modelo local", "local-worker", "strata", "offload de tokens".
 ---
 
-# oss-worker: o gpt-oss como ajudante do Claude
+# local-worker: o modelo local como ajudante do Claude
 
-Ferramenta: `python ~/.claude/skills/oss-worker/oss.py` (só stdlib). Diferente da skill
-`offload-local` (o gpt-oss trabalha sozinho no Claude Code por um `TASKS.md`), aqui o
+Ferramenta: `python ~/.claude/skills/local-worker/local.py` (só stdlib). Fala com a API
+compatível com OpenAI do Strata (`http://127.0.0.1:8080`; outra porta: `LOCAL_URL`). O Strata
+precisa estar rodando (`START-HERE.bat` na pasta do Strata). Diferente da skill
+`offload-local` (o modelo local trabalha sozinho no Claude Code por um `TASKS.md`), aqui o
 Claude continua no comando e chama o modelo local para pedaços pequenos.
 
 ## 1. Vale usar? Só o custo em tokens do Claude decide
 
 Objetivo da skill: economizar tokens do Claude. Serve para qualquer tipo de tarefa.
 
-Rode `oss.py probe` e `oss.py estimate <arquivos> --out <tokens de saída> [--per-item]`.
+Rode `local.py probe` e `local.py estimate <arquivos> --out <tokens de saída> [--per-item]`.
 Depois compare dois custos, sempre em tokens do Claude:
 
 - **D (fazer direto):** o que você leria + o que você escreveria para fazer a tarefa sozinho.
@@ -38,11 +40,12 @@ Registre a conta em 3 linhas antes de rodar: D estimado, L estimado, decisão.
 - **Uma chamada (`run`)**: uma tarefa pequena, entrada < 60% do contexto. Use `--check` com um comando que falha se a saída estiver errada (`{out}` = arquivo de saída).
 - **Lote (`map`)**: muitos itens independentes. Um item por chamada, sem histórico: o contexto nunca cresce. Saída JSON; `--check-key` exige chaves. Retoma de onde parou.
 - **Sessão (`chat`)**: só quando o modelo precisa lembrar das respostas anteriores. Auto-compactação: perto de 60% do contexto o script resume os turnos antigos num "estado" e guarda só os 4 últimos turnos.
-- **Plano em .md (`offload-local`)**: trabalho longo que o gpt-oss faz sozinho com ferramentas (editar arquivos, rodar build). Use quando a pessoa não estiver olhando e cada tarefa tiver um comando de verificação.
+- **Plano em .md (`offload-local`)**: trabalho longo que o modelo local faz sozinho com ferramentas (editar arquivos, rodar build). Use quando a pessoa não estiver olhando e cada tarefa tiver um comando de verificação.
 
 ## 4. Regras de execução
 
 - Uma tarefa pequena por chamada. Diga o formato exato da saída e dê 1-2 exemplos.
+- Escreva o prompt em inglês. Se a saída precisa ser em português, peça isso de forma explícita e confira com mais cuidado.
 - Quando der, dê ao modelo uma lista fechada de respostas em vez de uma pergunta aberta (fica mais barato conferir).
 - Falhou duas vezes? Faça você mesmo. Não gaste uma terceira tentativa.
 - Decisões de design ficam com o Claude e com a pessoa.
@@ -56,7 +59,8 @@ Sempre confira o resultado antes de usar:
 3. Se a amostra tiver mais de 1 erro em 10, refaça o lote com um prompt melhor ou faça você mesmo.
 4. Registre no relatório: quantos itens, quantos conferidos, quantos corrigidos.
 
-## Limites medidos (2026-11-08, RTX 5060 Ti 16 GB + 32 GB RAM)
+## Limites medidos
 
-gpt-oss:20b MXFP4, `OLLAMA_CONTEXT_LENGTH=65536` (o modelo aceita 131072, o Ollama carrega 65536).
-~85 tok/s de saída. Orçamento seguro por chamada: ~39k tokens (60%).
+Qwen3.8-Flash-Next IQ2_XS no Strata, modo de pouca RAM, contexto 64K, KV 8-bit
+(RTX 5060 Ti 16 GB + 32 GB RAM). Orçamento seguro por chamada: ~39k tokens (60%).
+Velocidade: medir com `local.py probe` (só informação; não entra na decisão).
