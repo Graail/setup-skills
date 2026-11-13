@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Helper for the local gpt-oss model (Ollama). Stdlib only.
+"""Helper for the local model served by Strata (OpenAI-compatible API). Stdlib only.
+
+Env: LOCAL_URL (default http://127.0.0.1:8080), LOCAL_MODEL (Strata ignores the name),
+LOCAL_API_KEY (only if Strata has an api_key), LOCAL_CONTEXT (fallback context size).
 
 Commands
   probe                      context length, load state, measured speed
@@ -19,29 +22,52 @@ KEEP_TURNS turns stay verbatim. The summary is saved in the session file.
 """
 import argparse, json, os, subprocess, sys, time, urllib.request
 
-HOST = os.environ.get("OLLAMA_HOST_URL", "http://localhost:11434")
-MODEL = os.environ.get("OSS_MODEL", "gpt-oss:20b")
+HOST = os.environ.get("LOCAL_URL", "http://127.0.0.1:8080").rstrip("/")
+MODEL = os.environ.get("LOCAL_MODEL", "strata")
+API_KEY = os.environ.get("LOCAL_API_KEY", "")
 CHARS_PER_TOKEN = 3.5          # conservative for code/JSON
-COMPACT_AT = float(os.environ.get("OSS_COMPACT_AT", "0.60"))  # share of num_ctx that triggers compaction
+COMPACT_AT = float(os.environ.get("LOCAL_COMPACT_AT", "0.60"))  # share of num_ctx that triggers compaction
 KEEP_TURNS = 4
-SESS_DIR = os.path.join(os.environ.get("TEMP", "/tmp"), "oss-sessions")
+SESS_DIR = os.path.join(os.environ.get("TEMP", "/tmp"), "local-sessions")
 
 
 def http(path, body=None, timeout=1800):
+    headers = {"Content-Type": "application/json"}
+    if API_KEY:
+        headers["Authorization"] = "Bearer " + API_KEY
     req = urllib.request.Request(HOST + path, data=None if body is None else json.dumps(body).encode(),
-                                 headers={"Content-Type": "application/json"})
+                                 headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.loads(r.read())
 
 
+def _find_ctx(obj):
+    """First context-size field found in a /props or /v1/models answer."""
+    if isinstance(obj, dict):
+        for k in ("n_ctx", "context_length", "max_context", "context_window", "max_model_len"):
+            if isinstance(obj.get(k), int) and obj[k] > 0:
+                return obj[k]
+        for v in obj.values():
+            n = _find_ctx(v)
+            if n:
+                return n
+    elif isinstance(obj, list):
+        for v in obj:
+            n = _find_ctx(v)
+            if n:
+                return n
+    return 0
+
+
 def num_ctx():
-    try:
-        for m in http("/api/ps").get("models", []):
-            if m["name"] == MODEL:
-                return m.get("context_length") or 0
-    except Exception:
-        pass
-    return int(os.environ.get("OLLAMA_CONTEXT_LENGTH", "65536"))
+    for path in ("/props", "/v1/models"):
+        try:
+            n = _find_ctx(http(path, timeout=10))
+            if n:
+                return n
+        except Exception:
+            pass
+    return int(os.environ.get("LOCAL_CONTEXT", "65536"))
 
 
 def toks(text):
@@ -49,20 +75,21 @@ def toks(text):
 
 
 def chat_call(messages, think="low", fmt=None):
-    body = {"model": MODEL, "messages": messages, "stream": False, "think": think,
-            "options": {"temperature": 0.2}}
-    if fmt:
-        body["format"] = fmt
+    body = {"model": MODEL, "messages": messages, "stream": False, "temperature": 0.2,
+            "reasoning_effort": think}
+    if fmt == "json":
+        body["response_format"] = {"type": "json_object"}
     t = time.time()
-    d = http("/api/chat", body)
-    d["_wall"] = time.time() - t
-    return d
+    r = http("/v1/chat/completions", body)
+    # same shape the rest of the script reads: d["message"]["content"]
+    return {"message": {"content": r["choices"][0]["message"].get("content") or ""},
+            "usage": r.get("usage", {}), "_wall": time.time() - t}
 
 
 def stats(d):
-    pe, ev = d.get("prompt_eval_count", 0), d.get("eval_count", 0)
-    ed = (d.get("eval_duration") or 1) / 1e9
-    return f"in={pe} out={ev} {ev/ed:.0f} tok/s wall={d['_wall']:.1f}s"
+    u = d.get("usage", {})
+    pe, ev = u.get("prompt_tokens", 0), u.get("completion_tokens", 0)
+    return f"in={pe} out={ev} ~{ev/max(d['_wall'], 0.001):.0f} tok/s (wall, incl. prompt) wall={d['_wall']:.1f}s"
 
 
 def run_check(cmd, path):
@@ -95,9 +122,7 @@ def cmd_estimate(a):
     else:
         calls = max(1, -(-(total + overhead) // budget))
         print(f"total={total + overhead} tok  calls needed={calls}")
-    # measured on this PC (RTX, MXFP4): ~85 tok/s out, ~1500 tok/s prompt
-    sec = calls * (a.out / 85) + (total / 1500)
-    print(f"time estimate ~{sec/60:.1f} min (local, free)")
+    # speed is left out on purpose: the decision is Claude's token cost only (SKILL.md, section 1)
     print(f"Claude cost if done directly: read ~{total} + write ~{a.out * calls} tokens")
 
 
