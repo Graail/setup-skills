@@ -1,15 +1,24 @@
 ---
 name: offload-local
-description: Protocolo para dividir o trabalho entre o Claude na nuvem (planeja) e o modelo local gpt-oss (executa). Use quando o projeto tiver TASKS.md, quando a pessoa disser "offload", "planeje para o local", "prepare tarefas para o gpt-oss", ou quando você rodar como executor local (claude-local).
+description: Protocolo para dividir o trabalho entre o Claude na nuvem (planeja) e o modelo local Qwen3.8-Flash-Next no Strata (executa). Use quando o projeto tiver TASKS.md, quando a pessoa disser "offload", "planeje para o local", "prepare tarefas para o modelo local", ou quando você rodar como executor local (claude-local).
 ---
 
 # Offload local: a nuvem planeja, o modelo local executa
 
 Dois papéis. Descubra o seu antes de agir:
 - **Planejador**: o Claude na nuvem (comando `claude`). Tem internet, contexto grande e vê imagens.
-- **Executor**: o gpt-oss:20b local (comando `claude-local`). Contexto de 64k, sem internet, sem imagens.
+- **Executor**: o Qwen3.8-Flash-Next local, servido pelo Strata (comando `claude-local`). Contexto de 64k, sem internet.
 
 Se não souber qual é o seu papel, pergunte.
+
+### Ligar o executor
+
+1. Inicie o Strata: rode `START-HERE.bat` na pasta do Strata (sem `--setup`). Ele serve
+   uma API compatível com a Anthropic em `http://127.0.0.1:8080`.
+2. Rode `claude-local.cmd` (nesta pasta da skill). Ele abre o Claude Code apontado para o
+   Strata (`ANTHROPIC_BASE_URL`). Outra porta: defina `STRATA_URL` antes.
+3. O Strata e o ComfyUI usam a mesma GPU. Não rode os dois ao mesmo tempo.
+4. As instruções ao executor (TASKS.md) devem ser em inglês. O modelo trabalha melhor assim.
 
 Arquivos na raiz do projeto:
 - `TASKS.md`: fila de tarefas. Só o planejador escreve tarefas novas.
@@ -62,6 +71,8 @@ do projeto:
 & "$HOME\.claude\skills\offload-local\rodar-executor.ps1"            # fila toda
 & "$HOME\.claude\skills\offload-local\rodar-executor.ps1" -DryRun    # só mostra
 ```
+
+Por padrão ele usa o `claude-local.cmd` desta pasta. Outro executor: `-Comando <caminho>`.
 
 Os logs ficam em `%TEMP%\offload-logs\<projeto>`.
 

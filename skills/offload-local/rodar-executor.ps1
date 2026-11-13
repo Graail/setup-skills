@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Roda o executor local (gpt-oss) tarefa por tarefa, cada uma numa conversa nova.
+  Roda o executor local (Qwen3.8-Flash-Next no Strata) tarefa por tarefa, cada uma numa conversa nova.
 
 .DESCRIPTION
   Rotação automática de contexto: cada tarefa do TASKS.md roda num processo
@@ -22,7 +22,7 @@
   & "$HOME\.claude\skills\offload-local\rodar-executor.ps1" -Comando claude-local -DryRun
 #>
 param(
-  [string]$Comando = "claude-local",
+  [string]$Comando = (Join-Path $PSScriptRoot "claude-local.cmd"),
   [int]$MaxTarefas = 10,
   [switch]$DryRun
 )
