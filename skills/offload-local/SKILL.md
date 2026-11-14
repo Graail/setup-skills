@@ -13,6 +13,12 @@ Se não souber qual é o seu papel, pergunte.
 
 ### Ligar o executor
 
+**Autorização permanente da usuária (2026-11-14):** o Claude pode iniciar o Strata
+sempre que precisar, sem perguntar. Antes, confira se ele já está no ar
+(`curl -s -m 3 http://127.0.0.1:8080/v1/models`) e se o ComfyUI está fechado
+(mesma GPU). Inicie em segundo plano (`C:\Strata\srcun-iq2_xs.bat`) e espere a
+API responder. Avise a usuária em uma linha que o Strata foi ligado.
+
 1. Inicie o Strata: rode `START-HERE.bat` na pasta do Strata (sem `--setup`). Ele serve
    uma API compatível com a Anthropic em `http://127.0.0.1:8080`.
 2. Rode `claude-local.cmd` (nesta pasta da skill). Ele abre o Claude Code apontado para o

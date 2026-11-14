@@ -46,3 +46,7 @@ O que mudou em cada skill, em qual projeto e por quê. Mais recente primeiro.
   otimização de desempenho" (medir, corrigir pelo maior gargalo, validar), com
   as 31 dicas do reel da @breakingbreach. Motivo: a Yolo quer que todo projeto
   de software termine com essa etapa.
+
+## 2026-11-14 — offload-local (projeto blupee-rupee)
+- Autorização permanente da usuária: o Claude pode ligar o Strata sempre que precisar, sem perguntar. Antes confere se a API já responde e se o ComfyUI está fechado (mesma GPU); avisa em uma linha.
+- Por quê: o planejador parava o trabalho esperando a usuária ligar o servidor.
